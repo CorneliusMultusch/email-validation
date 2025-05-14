@@ -1,5 +1,3 @@
-const fetch = require('node-fetch'); // or import fetch from 'node-fetch' if using ES Modules
-
 exports.handler = async function (event, context) {
     const { email } = event.queryStringParameters;
     const API_KEY = process.env.ABSTRACT_API_KEY; // Load securely from environment variables

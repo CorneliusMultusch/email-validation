@@ -16,8 +16,5 @@
   "bugs": {
     "url": "https://github.com/CorneliusMultusch/email-validation/issues"
   },
-  "homepage": "https://github.com/CorneliusMultusch/email-validation#readme",
-  "dependencies": {
-    "node-fetch": "^3.3.2"
-  }
+  "homepage": "https://github.com/CorneliusMultusch/email-validation#readme"
 }
