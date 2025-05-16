@@ -57,39 +57,41 @@ exports.handler = async function(event, context) {
 
     const url = `https://emailvalidation.abstractapi.com/v1/?api_key=${API_KEY}&email=${encodeURIComponent(email)}`;
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+   try {
+    const response = await fetch(url);
+    const data = await response.json(); // Antwort von Abstract API
 
-        // Deine Validierungslogik (isValidOverall, message etc.)
-        const isValidOverall = data.is_valid_format && data.is_valid_format.value &&
-                             data.is_disposable_email && !data.is_disposable_email.value &&
-                             data.quality_score && parseFloat(data.quality_score) >= 0.70;
+    // Primäre Validitätsprüfung (Beispiel)
+    const isValidOverall = data.is_valid_format && data.is_valid_format.value &&
+                         data.is_disposable_email && !data.is_disposable_email.value &&
+                         data.quality_score && parseFloat(data.quality_score) >= 0.70;
 
-        let message = 'Prüfung abgeschlossen.'; // Platzhalter - füge deine Logik ein
+    // Hole die relevanten Werte von Abstract API
+    const isFreeEmailValue = data.is_free_email ? data.is_free_email.value : null;
+    // ACHTUNG: Abstract API nennt dieses Feld oft 'is_role_based_email'
+    const isRoleEmailValue = data.is_role_based_email ? data.is_role_based_email.value : null;
 
-        // Check if it's a business email
-        const isBusinessEmail = data.is_commercial_email ? data.is_commercial_email.value : null;
 
-        return {
-            statusCode: 200,
-            headers: headers, // Wichtig: CORS-Header zur Antwort hinzufügen
-            body: JSON.stringify({
-                isValid: isValidOverall,
-                message: message,
-                autocorrect: data.autocorrect || '',
-                qualityScore: data.quality_score || 'N/A',
-                isDisposable: data.is_disposable_email ? data.is_disposable_email.value : null,
-                isValidFormat: data.is_valid_format ? data.is_valid_format.value : null,
-                isBusinessEmail: isBusinessEmail, // Include business email information
-            }),
-        };
-    } catch (error) {
-        console.error('Fehler bei der API-Abfrage oder Datenverarbeitung:', error);
-        return {
-            statusCode: 500,
-            headers: headers, // CORS-Header auch bei Fehlern mitsenden
-            body: JSON.stringify({ error: 'Validierung fehlgeschlagen. Bitte versuchen Sie es später erneut.' }),
-        };
-    }
+    return {
+        statusCode: 200,
+        headers: headers,
+        body: JSON.stringify({
+            isValidOverall: isValidOverall, // Kannst du senden, wenn du willst, oder Client entscheidet
+            isValidFormat: data.is_valid_format ? data.is_valid_format.value : null,
+            isDisposable: data.is_disposable_email ? data.is_disposable_email.value : null,
+            qualityScore: data.quality_score || 'N/A',
+            autocorrect: data.autocorrect || '',
+            isFreeEmail: isFreeEmailValue,     // NEU bzw. WIEDER DA
+            isRoleEmail: isRoleEmailValue      // NEU bzw. WIEDER DA (achte auf korrekten Feldnamen von Abstract)
+            // isBusinessEmail wird nicht mehr gesendet
+        }),
+    };
+} catch (error) {
+    console.error('Fehler bei der API-Abfrage oder Datenverarbeitung:', error);
+    return {
+        statusCode: 500,
+        headers: headers,
+        body: JSON.stringify({ error: 'Validierung fehlgeschlagen. Bitte versuchen Sie es später erneut.' }),
+    };
+}
 };
