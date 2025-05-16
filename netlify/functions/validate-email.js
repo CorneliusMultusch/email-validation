@@ -61,13 +61,15 @@ exports.handler = async function(event, context) {
         const response = await fetch(url);
         const data = await response.json();
 
-        // Deine Validierungslogik (isValidOverall, message etc.) von vorher...
-        // Beispielhaft gekürzt:
+        // Deine Validierungslogik (isValidOverall, message etc.)
         const isValidOverall = data.is_valid_format && data.is_valid_format.value &&
                              data.is_disposable_email && !data.is_disposable_email.value &&
                              data.quality_score && parseFloat(data.quality_score) >= 0.70;
-        // ... (deine ausführlichere message-Logik hier einfügen) ...
+
         let message = 'Prüfung abgeschlossen.'; // Platzhalter - füge deine Logik ein
+
+        // Check if it's a business email
+        const isBusinessEmail = data.is_commercial_email ? data.is_commercial_email.value : null;
 
         return {
             statusCode: 200,
@@ -78,7 +80,8 @@ exports.handler = async function(event, context) {
                 autocorrect: data.autocorrect || '',
                 qualityScore: data.quality_score || 'N/A',
                 isDisposable: data.is_disposable_email ? data.is_disposable_email.value : null,
-                isValidFormat: data.is_valid_format ? data.is_valid_format.value : null
+                isValidFormat: data.is_valid_format ? data.is_valid_format.value : null,
+                isBusinessEmail: isBusinessEmail, // Include business email information
             }),
         };
     } catch (error) {
