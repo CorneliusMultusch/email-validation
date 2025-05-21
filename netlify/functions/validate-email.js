@@ -6,10 +6,11 @@ exports.handler = async function(event, context) {
     const origin = event.headers.origin; // Herkunft der Anfrage
     const allowedOrigins = [
         'https://www.kopfundmuetze.de', // Deine Hauptdomain
-        'https://kopfundmuetze.de',     // Ohne www, falls auch genutzt
         'https://www.kraftblock.com', // Kraftblock hauptdomain 
         'https://kraftblock.com',     // Kraftblock ohne www 
+        'https://kraftblock.webflow.io',     // Kraftblock Webflow Subdomain
         
+
         // Füge hier weitere Domains hinzu, falls nötig (z.B. staging.kopfundmuetze.de)
         // Für lokale Tests in Webflow (z.B. webflow.io Subdomain):
         // 'https://DEIN-WEBFLOW-PROJEKT.webflow.io'
